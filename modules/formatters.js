@@ -48,7 +48,7 @@ export function formatJob(job) {
 
   const formatted = {
     ...job,
-    defaultJob: job.defaultJob === 1
+    defaultJob: job.defaultJob ? true : false
   };
 
   formatted.rateString = '';
@@ -62,17 +62,6 @@ export function formatJob(job) {
   formatted.clockOutString = formatTime(formatted.clockOutDate);
 
   formatted.duration = calculateDuration(formatted.clockInDate, formatted.clockOutDate);
-  // const hours = intFormat(Math.floor(formatted.duration));
-  // const mins = intFormat((formatted.duration - hours) * 60);
-
-  // const duration = [];
-  // if (hours > 0) {
-  //   duration.push(`${hours} hours`);
-  // }
-  // if (mins > 0) {
-  //   duration.push(`${mins} minutes`);
-  // }
-  // formatted.durationString = duration.join(', ');
   formatted.durationString = floatFormat(formatted.duration);
 
   return formatted;
@@ -97,17 +86,6 @@ export function formatTip(tip) {
   formatted.clockOutString = formatTime(formatted.clockOutDate);
 
   formatted.duration = calculateDuration(formatted.clockInDate, formatted.clockOutDate);
-  // const hours = intFormat(Math.floor(formatted.duration));
-  // const mins = intFormat((formatted.duration - hours) * 60);
-
-  // const duration = [];
-  // if (hours > 0) {
-  //   duration.push(`${hours} hours`);
-  // }
-  // if (mins > 0) {
-  //   duration.push(`${mins} minutes`);
-  // }
-  // formatted.durationString = duration.join(', ');
   formatted.durationString = floatFormat(formatted.duration);
 
   formatted.amountString = `$${floatFormat(formatted.amount)}`;
