@@ -1,7 +1,9 @@
 node_modules/**/*
+.vscode/**/*
 .expo/*
 npm-debug.*
 *.jks
 *.p12
 *.key
 *.mobileprovision
+*.bak

@@ -234,10 +234,12 @@ export function saveTip() {
           tip: savedTip
         }
       });
-      const tips = await tipDao.getMonthlyTotals();
+      const tipSummaries = await tipDao.getMonthlyTotals();
+      const tips = await tipDao.getAll();
       return dispatch({
         type: GET_TIPS_SUCCESS,
         payload: {
+          tipSummaries,
           tips
         }
       });
@@ -261,10 +263,12 @@ export function deleteTip() {
       dispatch({
         type: DELETE_TIP_SUCCESS
       });
-      const tips = await tipDao.getMonthlyTotals();
+      const tipSummaries = await tipDao.getMonthlyTotals();
+      const tips = await tipDao.getAll();
       return dispatch({
         type: GET_TIPS_SUCCESS,
         payload: {
+          tipSummaries,
           tips
         }
       });
