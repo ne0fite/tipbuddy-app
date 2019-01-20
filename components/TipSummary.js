@@ -1,31 +1,36 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import {
+  Title,
+  Text,
+} from 'react-native-paper';
 
 export default class TipSummary extends React.Component {
   render() {
     const { tipSummary } = this.props;
+    const { colors } = this.props.theme;
     return (
       <View
-        style={styles.tipSummary}
+        style={[styles.tipSummary, { backgroundColor: colors.background, }]}
         key={`tip-summary-${tipSummary.monthString}`}
       >
-        <Text style={styles.heading}>{tipSummary.monthString}</Text>
+        <Title>{tipSummary.monthString}</Title>
         <View style={styles.detailContainer}>
           <View style={styles.detailColumn}>
-            <Text style={styles.detailRow}>
-              Tips:
-              {tipSummary.amountSum}
-            </Text>
-            <Text style={styles.detailRow}>
-              Tip Rate:
-              {tipSummary.tipRateAvg}
-            </Text>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Tips:</Text>
+              <Text>{tipSummary.amountSum}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Tip Rate:</Text>
+              <Text>{tipSummary.tipRateAvg}</Text>
+            </View>
           </View>
           <View style={styles.detailColumn}>
-            <Text style={styles.detailRow}>
-              Hours:
-              {tipSummary.hoursSum}
-            </Text>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}> Hours:</Text>
+              <Text>{tipSummary.hoursSum}</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -39,10 +44,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
   },
-  heading: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
   detailContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -51,5 +52,10 @@ const styles = StyleSheet.create({
   },
   detailRow: {
     marginBottom: 3,
-  }
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  label: {
+    paddingRight: 5,
+  },
 });

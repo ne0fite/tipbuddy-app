@@ -3,6 +3,7 @@
     "name": "Tip Stash",
     "slug": "tipstash-app",
     "description": "Track your tip earnings",
+    "githubUrl": "https://github.com/ne0fite/tipstash-app",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": [
@@ -11,6 +12,7 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
+    "primaryColor": "#990000",
     "icon": "./assets/images/icon.png",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -25,11 +27,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.phoenixbright.tipkeeper",
+      "bundleIdentifier": "com.phoenixbright.tipstash",
       "usesIcloudStorage": true
     },
 		"android": {
-			"package": "com.phoenixbright.tipkeeper"
+			"package": "com.phoenixbright.tipstash"
     }
   }
 }

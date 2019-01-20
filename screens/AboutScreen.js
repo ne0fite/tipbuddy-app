@@ -7,8 +7,9 @@ export default class AboutScreen extends React.Component {
   };
 
   render() {
+    const { colors } = this.props.theme;
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background, }]}>
       </ScrollView>
     );
   }
@@ -18,6 +19,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: '#fff',
   },
 });

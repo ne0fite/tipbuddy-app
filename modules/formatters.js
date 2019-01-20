@@ -78,7 +78,7 @@ export function formatTip(tip) {
   }
 
   formatted.jobDate = new Date(tip.jobDate);
-  formatted.jobDateString = moment(formatted.jobDate).format('dddd, MMMM D, YYYY');
+  formatted.jobDateString = moment(formatted.jobDate).format('ddd, MMM D, YYYY');
 
   formatted.clockInDate = getDateFromTime(formatted.clockIn);
   formatted.clockOutDate = getDateFromTime(formatted.clockOut);

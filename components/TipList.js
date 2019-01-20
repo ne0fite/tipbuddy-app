@@ -78,7 +78,6 @@ export default class TipList extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     backgroundColor: '#F5FCFF',
@@ -89,7 +88,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   content: {
-    backgroundColor: '#fff',
   },
   active: {
     backgroundColor: 'rgba(255,255,255,1)',

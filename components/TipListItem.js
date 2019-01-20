@@ -1,5 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Subheading,
+  Text,
+  Title,
+} from 'react-native-paper';
 
 export default class TipListItem extends React.Component {
 
@@ -10,42 +15,43 @@ export default class TipListItem extends React.Component {
 
   render() {
     const { tip } = this.props;
+    const { colors, fonts } = this.props.theme;
     return (
       <TouchableOpacity
-        style={styles.tip}
+        style={[styles.tip, { backgroundColor: colors.background, }]}
         onPress={this.editTip}
         key={tip.id}
       >
-        <Text style={styles.heading}>{tip.jobName}</Text>
-        <Text style={styles.jobDate}>{tip.jobDateString}</Text>
+        <Subheading>{tip.jobName}</Subheading>
+        <Text style={{ fontFamily: fonts.thin, fontSize: 16, marginBottom: 5 }}>{tip.jobDateString}</Text>
         <View style={styles.detailContainer}>
           <View style={styles.detailColumn}>
-            <Text style={styles.detailRow}>
-              Amount:
-              {tip.amountString}
-            </Text>
-            <Text style={styles.detailRow}>
-              Tip Rate:
-              {tip.tipRateString}
-            </Text>
-            <Text style={styles.detailRow}>
-              Sales:
-              {tip.salesString}
-            </Text>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Amount:</Text>
+              <Text>{tip.amountString}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Tip Rate:</Text>
+              <Text>{tip.tipRateString}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Sales:</Text>
+              <Text>{tip.salesString}</Text>
+            </View>
           </View>
           <View style={styles.detailColumn}>
-            <Text style={styles.detailRow}>
-              Hours:
-              {tip.durationString}
-            </Text>
-            <Text style={styles.detailRow}>
-              Wages:
-              {tip.wagesString}
-            </Text>
-            <Text style={styles.detailRow}>
-              Tip %:
-              {tip.tipPercentString}
-            </Text>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Hours:</Text>
+              <Text>{tip.durationString}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Wages:</Text>
+              <Text>{tip.wagesString}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Tip %:</Text>
+              <Text>{tip.tipPercentString}</Text>
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -59,14 +65,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
   },
-  heading: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  jobDate: {
-    color: 'grey',
-    marginBottom: 5,
-  },
   detailContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -75,5 +73,10 @@ const styles = StyleSheet.create({
   },
   detailRow: {
     marginBottom: 3,
-  }
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  label: {
+    paddingRight: 5,
+  },
 });

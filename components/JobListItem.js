@@ -1,5 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  Subheading,
+} from 'react-native-paper';
 
 export default class JobListItem extends React.Component {
 
@@ -10,13 +13,14 @@ export default class JobListItem extends React.Component {
 
   render() {
     const { job } = this.props;
+    const { colors } = this.props.theme;
     return (
       <TouchableOpacity
-        style={styles.job}
+        style={[styles.job, { backgroundColor: colors.background, }]}
         onPress={this.editJob}
         key={job.id}
       >
-        <Text>{job.name}</Text>
+        <Subheading>{job.name}</Subheading>
       </TouchableOpacity>
     );
   }

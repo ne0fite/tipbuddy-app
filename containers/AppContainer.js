@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withTheme } from 'react-native-paper';
 
 import {
   getJobs,
@@ -39,7 +40,7 @@ const appContainer = (View) => {
     }, dispatch),
   });
 
-  return connect(mapStateToProps, mapDispatchToProps)(View);
+  return connect(mapStateToProps, mapDispatchToProps)(withTheme(View));
 };
 
 export default appContainer;

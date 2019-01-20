@@ -1,9 +1,16 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  Appbar,
+} from 'react-native-paper';
 
 export default class ReportsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Reports',
+    header: null,
   };
 
   editJob = () => {
@@ -11,9 +18,17 @@ export default class ReportsScreen extends React.Component {
   }
 
   render() {
+    const { colors } = this.props.theme;
     return (
-      <ScrollView style={styles.container}>
-      </ScrollView>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Appbar.Header>
+          <Appbar.Content
+            title="Reports"
+          />
+        </Appbar.Header>
+        <ScrollView>
+        </ScrollView>
+      </View>
     );
   }
 }
@@ -21,7 +36,5 @@ export default class ReportsScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
   },
 });

@@ -1,16 +1,13 @@
 import React from 'react';
-import {
-  Platform,
-  StatusBar,
-  StyleSheet,
-  View
-} from 'react-native';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
-import { AppLoading, Font, Icon } from 'expo';
-import AppNavigator from './navigation/AppNavigator';
+import { Provider as StoreProvider } from 'react-redux';
+import { Provider as PaperProvider } from 'react-native-paper';
 
+import { AppLoading, Font, Icon } from 'expo';
+
+import theme from './theme';
+import AppNavigator from './navigation/AppNavigator';
 import JobDAO from './dao/JobDAO';
 import TipDAO from './dao/TipDAO';
 
@@ -45,7 +42,6 @@ export default class App extends React.Component {
     }),
   ]);
 
-
   handleLoadingError = (error) => {
     // In this case, you might want to report the error to your error
     // reporting service, for example Sentry
@@ -66,20 +62,13 @@ export default class App extends React.Component {
         />
       );
     }
+
     return (
-      <Provider store={store}>
-        <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+      <PaperProvider theme={theme}>
+        <StoreProvider store={store}>
           <AppNavigator />
-        </View>
-      </Provider>
+        </StoreProvider>
+      </PaperProvider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});

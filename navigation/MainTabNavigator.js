@@ -2,6 +2,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
+import theme from '../theme';
 import TabBarIcon from '../components/TabBarIcon';
 import appContainer from '../containers/AppContainer';
 import TipsScreen from '../screens/TipsScreen';
@@ -83,9 +84,22 @@ SettingsStack.navigationOptions = {
   ),
 };
 
+const { colors } = theme;
+
 export default createBottomTabNavigator({
   TipsStack,
   ReportsStack,
   JobsStack,
   SettingsStack,
+}, {
+  tabBarOptions: {
+    // inactiveBackgroundColor: colors.background,
+    // activeBackgroundColor: colors.activeBackground,
+    activeTintColor: colors.text,
+    inactiveTintColor: colors.inactive,
+    style: {
+      backgroundColor: colors.background,
+      borderTopColor: colors.text,
+    }
+  }
 });

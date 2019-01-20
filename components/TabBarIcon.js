@@ -1,17 +1,18 @@
 import React from 'react';
 import { Icon } from 'expo';
+import { withTheme } from 'react-native-paper';
 
-import Colors from '../constants/Colors';
+const TabBarIcon = (props) => {
+  const { colors } = props.theme;
 
-export default class TabBarIcon extends React.Component {
-  render() {
-    return (
-      <Icon.Ionicons
-        name={this.props.name}
-        size={26}
-        style={{ marginBottom: -3 }}
-        color={this.props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-      />
-    );
-  }
-}
+  return (
+    <Icon.Ionicons
+      name={props.name}
+      size={26}
+      style={{ marginBottom: -3, paddingTop: 5, paddingBottom: 5 }}
+      color={props.focused ? colors.text : colors.inactive}
+    />
+  );
+};
+
+export default withTheme(TabBarIcon);

@@ -2,17 +2,20 @@ import React from 'react';
 import {
   ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity
+  TouchableOpacity,
+  View
 } from 'react-native';
+import {
+  Appbar,
+  Text,
+} from 'react-native-paper';
 
 import { clearData, importData } from '../modules/import';
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Settings',
+    header: null,
   };
-
 
   clearData = async () => {
     try {
@@ -36,19 +39,28 @@ export default class SettingsScreen extends React.Component {
   }
 
   render() {
+    const { colors } = this.props.theme;
     return (
-      <ScrollView style={styles.container}>
-        <TouchableOpacity
-          onPress={this.clearData}
-        >
-          <Text>Clear Data</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={this.importData}
-        >
-          <Text>Import Data</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Appbar.Header>
+          <Appbar.Content
+            title="Settings"
+          />
+          <Appbar.Action icon="add" onPress={this.newTip} />
+        </Appbar.Header>
+        <ScrollView>
+          <TouchableOpacity
+            onPress={this.clearData}
+          >
+            <Text>Clear Data</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={this.importData}
+          >
+            <Text>Import Data</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     );
   }
 }
@@ -56,7 +68,5 @@ export default class SettingsScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
   },
 });

@@ -2,21 +2,26 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import {
+  ScrollView,
+  View,
+} from 'react-native';
+import { Icon } from 'expo';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import {
+  Appbar,
+  Switch,
   Text,
   TextInput,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Switch
-} from 'react-native';
-import DateTimePicker from 'react-native-modal-datetime-picker';
+  TouchableRipple,
+} from 'react-native-paper';
 
-export default class EditJobScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    const title = _.get(navigation.state, 'params.title', 'Edit Job');
-    return {
-      title,
-    };
+import styles from '../theme/styles';
+import DeleteButton from '../components/DeleteButton';
+
+class EditJobScreen extends React.Component {
+  static navigationOptions = {
+    header: null,
   };
 
   constructor(props) {
@@ -33,6 +38,10 @@ export default class EditJobScreen extends React.Component {
     const { navigation } = this.props;
     const id = _.get(navigation.state, 'params.id', null);
     this.props.jobsActions.getJob(id);
+  }
+
+  goBack = () => {
+    this.props.navigation.goBack();
   }
 
   updateValue = (key, value) => {
@@ -66,7 +75,11 @@ export default class EditJobScreen extends React.Component {
   }
 
   saveJob = () => {
-    this.props.jobsActions.saveJob();
+    this.props.jobsActions.saveJob().then(() => {
+      this.goBack();
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
   deleteJob = async () => {
@@ -80,9 +93,7 @@ export default class EditJobScreen extends React.Component {
       return null;
     }
     return (
-      <TouchableOpacity onPress={this.deleteJob}>
-        <Text style={styles.dangerButton}>Delete</Text>
-      </TouchableOpacity>
+      <DeleteButton onPress={this.deleteJob} />
     );
   }
 
@@ -92,148 +103,127 @@ export default class EditJobScreen extends React.Component {
       return null;
     }
 
+    const { colors } = this.props.theme;
+
+    const title = job.id ? 'Edit Job' : 'New Job';
+
     return (
-      <View style={styles.container}>
-        <View style={styles.form}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Name</Text>
-            <View style={styles.control}>
-              <TextInput
-                onChangeText={_.partial(this.updateValue, 'name')}
-                style={styles.textInput}
-                value={job.name}
-              />
+        <Appbar.Header>
+          <Appbar.BackAction onPress={this.goBack} />
+          <Appbar.Content
+            title={title}
+          />
+          <Appbar.Action icon="check" onPress={this.saveJob} />
+        </Appbar.Header>
+
+        <KeyboardAwareScrollView>
+          <View style={styles.form}>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Name</Text>
+              <View style={styles.control}>
+                <TextInput
+                  mode="outlined"
+                  onChangeText={_.partial(this.updateValue, 'name')}
+                  onSubmitEditing={() => { this.rateTextInput.focus(); }}
+                  ref={(input) => { this.nameTextInput = input; }}
+                  returnKeyType="next"
+                  value={job.name}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Rate</Text>
-            <View style={styles.control}>
-              <TextInput
-                keyboardType={'decimal-pad'}
-                onChangeText={_.partial(this.updateValue, 'rate')}
-                style={styles.textInput}
-                value={`${job.rate}`}
-              />
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Rate</Text>
+              <View style={styles.control}>
+                <TextInput
+                  keyboardType="decimal-pad"
+                  mode="outlined"
+                  onChangeText={_.partial(this.updateValue, 'rate')}
+                  ref={(input) => { this.rateTextInput = input; }}
+                  returnKeyType="done"
+                  value={`${job.rate || ''}`}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Clock In</Text>
-            <View style={styles.control}>
-              <TouchableOpacity onPress={_.partial(this.showDateTimePicker, 'clockIn')}>
-                <Text>{job.clockInString}</Text>
-              </TouchableOpacity>
-              <DateTimePicker
-                date={job.clockInDate}
-                isVisible={this.state.showDateTimePicker.clockIn}
-                mode={'time'}
-                onConfirm={_.partial(this.confirmDate, 'clockIn')}
-                onCancel={_.partial(this.cancelDate, 'clockIn')}
-              />
+            <View style={[styles.formGroup, styles.formGroupAcross]}>
+              <Text style={styles.label}>Clock In</Text>
+              <TouchableRipple
+                onPress={_.partial(this.showDateTimePicker, 'clockIn')}
+              >
+                <View style={styles.textValueGroup}>
+                  <Text style={styles.textValue}>{job.clockInString}</Text>
+                  <Icon.Ionicons
+                    color={colors.text}
+                    name="ios-time"
+                    size={24}
+                    style={styles.textValueGroupIcon}
+                  />
+                  <DateTimePicker
+                    date={job.clockInDate}
+                    isVisible={this.state.showDateTimePicker.clockIn}
+                    mode="time"
+                    onConfirm={_.partial(this.confirmDate, 'clockIn')}
+                    onCancel={_.partial(this.cancelDate, 'clockIn')}
+                  />
+                </View>
+              </TouchableRipple>
             </View>
-          </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Clock Out</Text>
-            <View style={styles.control}>
-              <TouchableOpacity onPress={_.partial(this.showDateTimePicker, 'clockOut')}>
-                <Text>{job.clockOutString}</Text>
-              </TouchableOpacity>
-              <DateTimePicker
-                date={job.clockOutDate}
-                isVisible={this.state.showDateTimePicker.clockOut}
-                mode={'time'}
-                onConfirm={_.partial(this.confirmDate, 'clockOut')}
-                onCancel={_.partial(this.cancelDate, 'clockOut')}
-              />
+            <View style={[styles.formGroup, styles.formGroupAcross]}>
+              <Text style={styles.label}>Clock Out</Text>
+              <TouchableRipple
+                onPress={_.partial(this.showDateTimePicker, 'clockOut')}
+              >
+                <View style={styles.textValueGroup}>
+                  <Text style={styles.textValue}>{job.clockOutString}</Text>
+                  <Icon.Ionicons
+                    color={colors.text}
+                    name="ios-time"
+                    size={24}
+                    style={styles.textValueGroupIcon}
+                  />
+                  <DateTimePicker
+                    date={job.clockOutDate}
+                    isVisible={this.state.showDateTimePicker.clockOut}
+                    mode="time"
+                    onConfirm={_.partial(this.confirmDate, 'clockOut')}
+                    onCancel={_.partial(this.cancelDate, 'clockOut')}
+                  />
+                </View>
+              </TouchableRipple>
             </View>
-          </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Shift Duration</Text>
-            <View style={styles.control}>
-              <Text>{job.durationString}</Text>
+            <View style={[styles.formGroup, styles.formGroupAcross]}>
+              <Text style={styles.label}>Shift Duration</Text>
+              <View style={styles.control}>
+                <Text style={styles.textValue}>{job.durationString}</Text>
+              </View>
             </View>
-          </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Defualt</Text>
-            <View style={styles.control}>
-              <Switch
-                onValueChange={_.partial(this.updateValue, 'defaultJob')}
-                value={job.defaultJob}
-              />
+            <View style={[styles.formGroup, styles.formGroupAcross]}>
+              <Text style={styles.label}>Defualt</Text>
+              <View style={styles.control}>
+                <Switch
+                  onValueChange={_.partial(this.updateValue, 'defaultJob')}
+                  value={job.defaultJob}
+                />
+              </View>
             </View>
-          </View>
 
-          <View style={styles.buttonRow}>
-            <TouchableOpacity onPress={this.saveJob}>
-              <Text style={styles.primaryButton}>Save</Text>
-            </TouchableOpacity>
-            {this.renderDeleteButton()}
+
           </View>
+        </KeyboardAwareScrollView>
+
+        <View style={styles.buttonRow}>
+          {this.renderDeleteButton()}
         </View>
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
-  },
-  form: {
-    padding: 15,
-    display: 'flex',
-    justifyContent: 'space-between',
-    height: '100%'
-  },
-  formGroup: {
-    // marginTop: 15,
-    // marginBottom: 15
-  },
-  label: {
-    fontWeight: 'bold'
-  },
-  control: {
-    marginTop: 5
-  },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 5
-  },
-  buttonRow: {
-    marginTop: 15,
-    marginBottom: 15,
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  primaryButton: {
-    backgroundColor: 'blue',
-    borderWidth: 1,
-    color: 'white',
-    fontWeight: 'bold',
-    overflow: 'hidden',
-    padding: 10,
-    textAlign: 'center',
-    width: 150,
-  },
-  dangerButton: {
-    backgroundColor: 'red',
-    borderWidth: 1,
-    color: 'white',
-    fontWeight: 'bold',
-    overflow: 'hidden',
-    padding: 10,
-    textAlign: 'center',
-    width: 150,
-  }
-});
+export default EditJobScreen;
