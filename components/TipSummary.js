@@ -5,6 +5,32 @@ import {
   Text,
 } from 'react-native-paper';
 
+const styles = StyleSheet.create({
+  tipSummary: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc'
+  },
+  detailContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between'
+  },
+  detailColumn: {
+    width: '45%',
+  },
+  detailRow: {
+    marginBottom: 3,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  label: {
+    paddingRight: 5,
+  },
+});
+
 export default class TipSummary extends React.Component {
   render() {
     const { tipSummary } = this.props;
@@ -37,25 +63,3 @@ export default class TipSummary extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  tipSummary: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc'
-  },
-  detailContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between'
-  },
-  detailRow: {
-    marginBottom: 3,
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  label: {
-    paddingRight: 5,
-  },
-});

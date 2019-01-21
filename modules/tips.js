@@ -1,60 +1,87 @@
 import _ from 'lodash';
-import moment from 'moment';
 
 import { formatTip, formatTipSummary } from './formatters';
-import JobDAO from '../dao/JobDAO';
-import TipDAO from '../dao/TipDAO';
+import DAO from '../dao/DAO';
 
-const jobDao = new JobDAO();
-const tipDao = new TipDAO();
+const tipDao = DAO.get(DAO.TIP);
 
-export const GET_TIPS = 'tipkeeper-app/tips/GET_TIPS';
-export const GET_TIPS_SUCCESS = 'tipkeeper-app/tips/GET_TIPS_SUCCESS';
-export const GET_TIPS_FAIL = 'tipkeeper-app/tips/GET_TIPS_FAIL';
+export const GET_TIPS = 'tipstash-app/tips/GET_TIPS';
+export const GET_TIPS_SUCCESS = 'tipstash-app/tips/GET_TIPS_SUCCESS';
+export const GET_TIPS_FAIL = 'tipstash-app/tips/GET_TIPS_FAIL';
 
-export const GET_TIP = 'tipkeeper-app/tips/GET_TIP';
-export const GET_TIP_SUCCESS = 'tipkeeper-app/tips/GET_TIP_SUCCESS';
-export const GET_TIP_FAIL = 'tipkeeper-app/tips/GET_TIP_FAIL';
+export const GET_TIPS_SUMMARY = 'tipstash-app/tips/GET_TIPS_SUMMARY';
+export const GET_TIPS_SUMMARY_SUCCESS = 'tipstash-app/tips/GET_TIPS_SUMMARY_SUCCESS';
+export const GET_TIPS_SUMMARY_FAIL = 'tipstash-app/tips/GET_TIPS_SUMMARY_FAIL';
 
-export const UPDATE_TIP = 'tipkeeper-app/tips/UPDATE_TIP';
-export const UPDATE_TIP_SUCCESS = 'tipkeeper-app/tips/UPDATE_TIP_SUCCESS';
-export const UPDATE_TIP_FAIL = 'tipkeeper-app/tips/UPDATE_TIP_FAIL';
+export const GET_TIP = 'tipstash-app/tips/GET_TIP';
+export const GET_TIP_SUCCESS = 'tipstash-app/tips/GET_TIP_SUCCESS';
+export const GET_TIP_FAIL = 'tipstash-app/tips/GET_TIP_FAIL';
 
-export const SAVE_TIP = 'tipkeeper-app/tips/SAVE_TIP';
-export const SAVE_TIP_SUCCESS = 'tipkeeper-app/tips/SAVE_TIP_SUCCESS';
-export const SAVE_TIP_FAIL = 'tipkeeper-app/tips/SAVE_TIP_FAIL';
+export const SAVE_TIP = 'tipstash-app/tips/SAVE_TIP';
+export const SAVE_TIP_SUCCESS = 'tipstash-app/tips/SAVE_TIP_SUCCESS';
+export const SAVE_TIP_FAIL = 'tipstash-app/tips/SAVE_TIP_FAIL';
 
-export const DELETE_TIP = 'tipkeeper-app/tips/DELETE_TIP';
-export const DELETE_TIP_SUCCESS = 'tipkeeper-app/tips/DELETE_TIP_SUCCESS';
-export const DELETE_TIP_FAIL = 'tipkeeper-app/tips/DELETE_TIP_FAIL';
+export const DELETE_TIP = 'tipstash-app/tips/DELETE_TIP';
+export const DELETE_TIP_SUCCESS = 'tipstash-app/tips/DELETE_TIP_SUCCESS';
+export const DELETE_TIP_FAIL = 'tipstash-app/tips/DELETE_TIP_FAIL';
 
 const initialState = {
+  activeSections: [],
   tips: [],
-  tip: {}
 };
 
-function mapTipSummaries(tipSummaries, tips) {
-  const formattedSummaries = _.map(tipSummaries, formatTipSummary);
-  _.forEach(tips, (tip) => {
-    const formatted = formatTip(tip);
-    const monthString = moment(formatted.jobDate).utc().format('MMMM YYYY');
-    const summary = _.find(formattedSummaries, { monthString });
-    if (summary) {
-      summary.tips.push(formatted);
-    }
-  });
-  return formattedSummaries;
+function handleGetTipSummarySuccess(state, action) {
+  const {
+    year,
+    month,
+    tips,
+    tipSummaries
+  } = action.payload;
+
+  const formattedTipSummaries = _.map(tipSummaries, formatTipSummary);
+
+  const activeTips = _.find(formattedTipSummaries, { year, month });
+  if (activeTips) {
+    activeTips.tips = _.map(tips, formatTip);
+  }
+
+  return {
+    ...state,
+    tips: formattedTipSummaries,
+    year,
+    month,
+  };
+}
+
+function handleGetTipsSuccess(state, action) {
+  const { tips: tipSummaries } = state;
+  const { year, month, tips } = action.payload;
+
+  const activeTips = _.find(tipSummaries, { year, month });
+  if (activeTips) {
+    activeTips.tips = _.map(tips, formatTip);
+  }
+
+  return {
+    ...state,
+    tips: tipSummaries,
+    year,
+    month,
+  };
 }
 
 const tipsReducer = function tips(state = initialState, action) {
   switch (action.type) {
+    case GET_TIPS_SUMMARY_SUCCESS:
+      return handleGetTipSummarySuccess(state, action);
+    case GET_TIPS_SUMMARY_FAIL:
+      console.log('failed to get tips summaries', action.payload.error);
+      break;
+
     case GET_TIPS_SUCCESS:
-      return {
-        ...state,
-        tips: mapTipSummaries(action.payload.tipSummaries, action.payload.tips)
-      };
+      return handleGetTipsSuccess(state, action);
     case GET_TIPS_FAIL:
-      console.log('failed to get tips', action.payload.error);
+      console.log('failed to get tips by month', action.payload.error);
       break;
 
     case GET_TIP_SUCCESS:
@@ -66,31 +93,20 @@ const tipsReducer = function tips(state = initialState, action) {
       console.log('failed to get tip', action.payload.error);
       break;
 
-    case UPDATE_TIP_SUCCESS:
-      return {
-        ...state,
-        tip: formatTip({
-          ...state.tip,
-          [action.payload.key]: action.payload.value
-        })
-      };
-    case UPDATE_TIP_FAIL:
-      console.log('failed to update tip', action.payload.error);
-      break;
-
     case SAVE_TIP_SUCCESS:
-      return {
-        ...state,
-        tip: action.payload.tip
-      };
+      // return {
+      //   ...state,
+      // };
+      break;
     case SAVE_TIP_FAIL:
       console.log('failed to save tip', action.payload.error);
       break;
 
     case DELETE_TIP_SUCCESS:
-      return {
-        ...state
-      };
+      // return {
+      //   ...state
+      // };
+      break;
     case DELETE_TIP_FAIL:
       console.log('failed to delete tip', action.payload.error);
       break;
@@ -102,16 +118,16 @@ const tipsReducer = function tips(state = initialState, action) {
   return state;
 };
 
-export function getTips() {
+export function getTips(year, month) {
   return async (dispatch) => {
     try {
-      const tipSummaries = await tipDao.getMonthlyTotals();
-      const tips = await tipDao.getAll();
+      const tips = await tipDao.getAllByMonth(year, month);
       return dispatch({
         type: GET_TIPS_SUCCESS,
         payload: {
-          tipSummaries,
-          tips
+          tips,
+          year,
+          month,
         }
       });
     } catch (error) {
@@ -126,48 +142,36 @@ export function getTips() {
   };
 }
 
-async function makeEmptyTip() {
-  const tip = {
-    jobDate: new Date(),
-    amount: 0.00,
-    sales: 0.00,
-    ccTips: 0.00,
-    tipOut: 0.00,
-  };
-
-  const defaultJob = await jobDao.getDefault();
-  if (defaultJob) {
-    tip.jobId = defaultJob.id;
-    tip.jobName = defaultJob.name;
-    tip.job = defaultJob;
-    tip.clockIn = defaultJob.clockIn;
-    tip.clockOut = defaultJob.clockOut;
+function initParams(params) {
+  if (_.isNil(params)) {
+    const now = new Date();
+    return {
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+    };
   }
-
-  return tip;
+  return params;
 }
 
-async function loadTip(id) {
-  if (!id) {
-    // @TODO init tip from default job
-    return makeEmptyTip();
-  }
-  return tipDao.getById(id);
-}
-
-export function getTip(id) {
+export function getMonthlyTips(params) {
+  const { year: activeYear, month: activeMonth } = initParams(params);
   return async (dispatch) => {
     try {
-      const tip = await loadTip(id);
+      const tipSummaries = await tipDao.getMonthlyTotals();
+      const tips = await tipDao.getAllByMonth(activeYear, activeMonth);
       return dispatch({
-        type: GET_TIP_SUCCESS,
+        type: GET_TIPS_SUMMARY_SUCCESS,
         payload: {
-          tip: formatTip(tip)
+          tipSummaries,
+          tips,
+          year: activeYear,
+          month: activeMonth,
         }
       });
     } catch (error) {
+      console.log('failed to get tips!', error);
       return dispatch({
-        type: GET_TIP_FAIL,
+        type: GET_TIPS_SUMMARY_FAIL,
         payload: {
           error
         }
@@ -176,73 +180,21 @@ export function getTip(id) {
   };
 }
 
-export function updateTip(key, value) {
-  if (key === 'jobId') {
-    return async (dispatch) => {
-      const job = await jobDao.getById(value);
-      if (!job) {
-        return dispatch({
-          type: UPDATE_TIP_FAIL,
-          payload: {
-            error: new Error('Invalid Job ID')
-          }
-        });
-      }
-
-      dispatch({
-        type: UPDATE_TIP_SUCCESS,
-        payload: {
-          key: 'job',
-          value: job
-        }
-      });
-      dispatch({
-        type: UPDATE_TIP_SUCCESS,
-        payload: {
-          key: 'clockIn',
-          value: job.clockIn
-        }
-      });
-      return dispatch({
-        type: UPDATE_TIP_SUCCESS,
-        payload: {
-          key: 'clockOut',
-          value: job.clockOut
-        }
-      });
-    };
-  }
-
-  return {
-    type: UPDATE_TIP_SUCCESS,
-    payload: {
-      key,
-      value
-    }
-  };
-}
-
-export function saveTip() {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const { tip } = state.tips;
+export function saveTip(tip) {
+  return async (dispatch) => {
     try {
       const savedTip = await tipDao.save(tip);
-      dispatch({
+      await dispatch({
         type: SAVE_TIP_SUCCESS,
         payload: {
           tip: savedTip
         }
       });
-      const tipSummaries = await tipDao.getMonthlyTotals();
-      const tips = await tipDao.getAll();
-      return dispatch({
-        type: GET_TIPS_SUCCESS,
-        payload: {
-          tipSummaries,
-          tips
-        }
-      });
+      const { jobDate } = tip;
+      return dispatch(getMonthlyTips({
+        year: jobDate.getFullYear(),
+        month: jobDate.getMonth() + 1,
+      }));
     } catch (error) {
       return dispatch({
         type: SAVE_TIP_FAIL,
@@ -254,24 +206,18 @@ export function saveTip() {
   };
 }
 
-export function deleteTip() {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const { tip } = state.tips;
+export function deleteTip(tip) {
+  return async (dispatch) => {
     try {
       await tipDao.delete(tip.id);
-      dispatch({
+      await dispatch({
         type: DELETE_TIP_SUCCESS
       });
-      const tipSummaries = await tipDao.getMonthlyTotals();
-      const tips = await tipDao.getAll();
-      return dispatch({
-        type: GET_TIPS_SUCCESS,
-        payload: {
-          tipSummaries,
-          tips
-        }
-      });
+      const { jobDate } = tip;
+      return dispatch(getMonthlyTips({
+        year: jobDate.getFullYear(),
+        month: jobDate.getMonth() + 1,
+      }));
     } catch (error) {
       return dispatch({
         type: DELETE_TIP_FAIL,

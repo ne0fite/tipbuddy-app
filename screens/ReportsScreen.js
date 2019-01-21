@@ -6,7 +6,14 @@ import {
 } from 'react-native';
 import {
   Appbar,
+  Title,
 } from 'react-native-paper';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default class ReportsScreen extends React.Component {
   static navigationOptions = {
@@ -27,14 +34,9 @@ export default class ReportsScreen extends React.Component {
           />
         </Appbar.Header>
         <ScrollView>
+          <Title>Reports!</Title>
         </ScrollView>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

@@ -15,6 +15,18 @@ import {
   withTheme,
 } from 'react-native-paper';
 
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  text: {
+    paddingLeft: 8,
+  },
+});
+
 class SelectJobDialog extends Component {
   constructor(props) {
     super(props);
@@ -83,7 +95,7 @@ class SelectJobDialog extends Component {
       <Portal>
         <Dialog onDismiss={this.cancel} visible={visible}>
           <Dialog.Title>Choose Job</Dialog.Title>
-          <Dialog.ScrollArea style={{ maxHeight: 170, paddingHorizontal: 0 }}>
+          <Dialog.ScrollArea style={{ maxHeight: 400, paddingHorizontal: 0 }}>
             <ScrollView>
               <View>
                 {jobItems}
@@ -101,15 +113,3 @@ class SelectJobDialog extends Component {
 }
 
 export default withTheme(SelectJobDialog);
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  text: {
-    paddingLeft: 8,
-  },
-});

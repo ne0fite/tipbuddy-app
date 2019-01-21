@@ -4,12 +4,11 @@ import moment from 'moment';
 import Promise from 'bluebird';
 import * as Papa from 'papaparse';
 
-import { calculateDuration, getDateFromTime } from '../modules/formatters';
-import JobDAO from '../dao/JobDAO';
-import TipDAO from '../dao/TipDAO';
+import { calculateDuration, getDateFromTime } from './formatters';
+import DAO from '../dao/DAO';
 
-const jobDao = new JobDAO();
-const tipDao = new TipDAO();
+const jobDao = DAO.get(DAO.JOB);
+const tipDao = DAO.get(DAO.TIP);
 
 export async function clearData() {
   await tipDao.drop();
@@ -55,8 +54,8 @@ async function getOrCreateJob(jobName) {
   const job = await jobDao.create({
     name: jobName,
     rate: 0,
-    clockIn: '08:00',
-    clockOut: '05:00',
+    clockIn: '18:00',
+    clockOut: '02:00',
     defaultJob: false
   });
 

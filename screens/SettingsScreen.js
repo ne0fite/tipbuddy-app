@@ -12,6 +12,12 @@ import {
 
 import { clearData, importData } from '../modules/import';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -21,7 +27,7 @@ export default class SettingsScreen extends React.Component {
     try {
       await clearData();
       this.props.jobsActions.getJobs();
-      this.props.tipsActions.getTips();
+      this.props.tipsActions.getMonthlyTips();
     } catch (error) {
       console.log(error);
     }
@@ -32,7 +38,7 @@ export default class SettingsScreen extends React.Component {
       const url = 'http://localhost/tip_bucket_export.csv';
       await importData(url);
       this.props.jobsActions.getJobs();
-      this.props.tipsActions.getTips();
+      this.props.tipsActions.getMonthlyTips();
     } catch (error) {
       console.log(error);
     }
@@ -64,9 +70,3 @@ export default class SettingsScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

@@ -36,6 +36,16 @@ function floatFormat(value) {
   return '';
 }
 
+export function makeEmptyJob() {
+  return {
+    name: '',
+    rate: 0.00,
+    clockIn: '08:00',
+    clockOut: '17:00',
+    defaultJob: false
+  };
+}
+
 /**
  * Format the job for display.
  * @param {object} job
@@ -103,10 +113,30 @@ export function formatTip(tip) {
   return formatted;
 }
 
+export function makeEmptyTip(defaultJob) {
+  const tip = {
+    jobDate: new Date(),
+    amount: 0.00,
+    sales: 0.00,
+    ccTips: 0.00,
+    tipOut: 0.00,
+  };
+
+  if (defaultJob) {
+    tip.jobId = defaultJob.id;
+    tip.jobName = defaultJob.name;
+    tip.job = defaultJob;
+    tip.clockIn = defaultJob.clockIn;
+    tip.clockOut = defaultJob.clockOut;
+  }
+
+  return formatTip(tip);
+}
+
 export function formatTipSummary(tipSummary) {
+  const monthDate = new Date(tipSummary.month);
   const formatted = {
     ...tipSummary,
-    month: new Date(tipSummary.month),
     amountSum: `$${floatFormat(tipSummary.amountSum)}`,
     amountAvg: `$${floatFormat(tipSummary.amountAvg)}`,
     salesSum: `$${floatFormat(tipSummary.salesSum)}`,
@@ -120,7 +150,11 @@ export function formatTipSummary(tipSummary) {
     tips: []
   };
 
-  formatted.monthString = moment(formatted.month).utc().format('MMMM YYYY');
+  const monthDateUtc = moment(monthDate).utc();
+  formatted.monthDate = monthDateUtc.toDate();
+  formatted.year = monthDateUtc.get('year');
+  formatted.month = monthDateUtc.get('month') + 1;
+  formatted.monthString = monthDateUtc.format('MMMM YYYY');
 
   return formatted;
 }

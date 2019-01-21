@@ -8,16 +8,27 @@ import { Appbar } from 'react-native-paper';
 
 import TipList from '../components/TipList';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
 export default class TipsScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
+
+  componentWillMount() {
+    this.props.jobsActions.getJobs();
+  }
 
   newTip = () => {
     this.props.navigation.navigate('EditTip');
   }
 
   render() {
+    console.log('rendering tip screen');
     const { colors } = this.props.theme;
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -34,12 +45,3 @@ export default class TipsScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerButton: {
-    marginRight: 15
-  }
-});

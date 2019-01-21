@@ -5,16 +5,14 @@ import { withTheme } from 'react-native-paper';
 import {
   getJobs,
   getJob,
-  updateJob,
   saveJob,
-  deleteJob
+  deleteJob,
 } from '../modules/jobs';
 import {
+  getMonthlyTips,
   getTips,
-  getTip,
-  updateTip,
   saveTip,
-  deleteTip
+  deleteTip,
 } from '../modules/tips';
 
 const appContainer = (View) => {
@@ -27,16 +25,14 @@ const appContainer = (View) => {
     jobsActions: bindActionCreators({
       getJobs,
       getJob,
-      updateJob,
       saveJob,
-      deleteJob
+      deleteJob,
     }, dispatch),
     tipsActions: bindActionCreators({
+      getMonthlyTips,
       getTips,
-      getTip,
-      updateTip,
       saveTip,
-      deleteTip
+      deleteTip,
     }, dispatch),
   });
 

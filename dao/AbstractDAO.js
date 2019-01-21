@@ -1,10 +1,7 @@
-import { SQLite } from 'expo';
-
-const dbName = 'tipkeeper';
 export default class AbstractDAO {
 
-  constructor() {
-    this.db = SQLite.openDatabase('tipkeeper');
+  constructor(db) {
+    this.db = db;
   }
 
   async executeSql(sql, params = []) {

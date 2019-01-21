@@ -8,6 +8,15 @@ import { Appbar } from 'react-native-paper';
 
 import JobList from '../components/JobList';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  headerButton: {
+    marginRight: 15
+  }
+});
+
 export default class JobsScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -34,12 +43,3 @@ export default class JobsScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerButton: {
-    marginRight: 15
-  }
-});

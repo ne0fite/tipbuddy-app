@@ -48,7 +48,6 @@ export default class TipDAO extends AbstractDAO {
    * @return {Promise<array>}
    */
   async getAllByMonth(year, month) {
-
     const startDate = moment().year(year).month(month - 1).startOf('month')
       .startOf('day')
       .toDate();

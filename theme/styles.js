@@ -41,7 +41,6 @@ export default StyleSheet.create({
   },
   textValue: {
     fontSize: 20,
-    // marginRight: 15,
     textAlign: 'right',
   },
   buttonRow: {

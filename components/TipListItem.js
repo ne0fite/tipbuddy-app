@@ -3,14 +3,41 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
   Subheading,
   Text,
-  Title,
 } from 'react-native-paper';
 
-export default class TipListItem extends React.Component {
+const styles = StyleSheet.create({
+  tip: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc'
+  },
+  detailContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between'
+  },
+  detailColumn: {
+    width: '45%',
+  },
+  detailRow: {
+    marginBottom: 3,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  label: {
+    paddingRight: 5,
+  },
+  textValue: {
+    textAlign: 'right',
+  },
+});
 
+export default class TipListItem extends React.Component {
   editTip = () => {
     const { tip } = this.props;
-    this.props.navigation.navigate('EditTip', { id: tip.id })
+    this.props.navigation.navigate('EditTip', { tip });
   }
 
   render() {
@@ -23,7 +50,9 @@ export default class TipListItem extends React.Component {
         key={tip.id}
       >
         <Subheading>{tip.jobName}</Subheading>
-        <Text style={{ fontFamily: fonts.thin, fontSize: 16, marginBottom: 5 }}>{tip.jobDateString}</Text>
+        <Text style={{ fontFamily: fonts.thin, fontSize: 16, marginBottom: 5 }}>
+          {tip.jobDateString}
+        </Text>
         <View style={styles.detailContainer}>
           <View style={styles.detailColumn}>
             <View style={styles.detailRow}>
@@ -55,28 +84,6 @@ export default class TipListItem extends React.Component {
           </View>
         </View>
       </TouchableOpacity>
-    )
+    );
   }
 }
-
-const styles = StyleSheet.create({
-  tip: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc'
-  },
-  detailContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between'
-  },
-  detailRow: {
-    marginBottom: 3,
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  label: {
-    paddingRight: 5,
-  },
-});

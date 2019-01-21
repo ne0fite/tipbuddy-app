@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import {
@@ -14,11 +14,15 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
+import {
+  formatTip,
+  makeEmptyTip,
+} from '../modules/formatters';
 import styles from '../theme/styles';
 import DeleteButton from '../components/DeleteButton';
 import SelectJobDialog from '../components/SelectJobDialog';
 
-export default class EditTipScreen extends React.Component {
+class EditTipScreen extends Component {
   static navigationOptions = {
     header: null,
   };
@@ -30,13 +34,34 @@ export default class EditTipScreen extends React.Component {
       clockOut: false
     },
     showJobPicker: false,
+    tip: {
+    },
   };
 
   componentWillMount() {
+    const tip = this.loadTip();
+    this.setState({
+      tip
+    });
+  }
+
+  loadTip = () => {
     const { navigation } = this.props;
-    const id = _.get(navigation.state, 'params.id', null);
-    this.props.tipsActions.getTip(id);
-    this.props.jobsActions.getJobs();
+    const tip = _.get(navigation.state, 'params.tip', null);
+    if (!tip) {
+      const defaultJob = this.getDefaultJob();
+      return makeEmptyTip(defaultJob);
+    }
+    return tip;
+  }
+
+  getDefaultJob = () => {
+    const { jobs } = this.props.jobs;
+    const job = _.find(this.props.jobs.jobs, { defaultJob: true });
+    if (!job) {
+      return _.first(jobs);
+    }
+    return job;
   }
 
   goBack = () => {
@@ -44,11 +69,11 @@ export default class EditTipScreen extends React.Component {
   }
 
   updateValue = (key, value) => {
-    this.props.tipsActions.updateTip(key, value);
-  }
-
-  updateJob = (value) => {
-    this.updateValue('jobId', value);
+    const { tip } = this.state;
+    tip[key] = value;
+    this.setState({
+      tip: formatTip(tip)
+    });
   }
 
   showDateTimePicker = (key) => {
@@ -83,24 +108,28 @@ export default class EditTipScreen extends React.Component {
     this.hideDateTimePicker(key);
   }
 
-  saveTip = () => {
-    this.props.tipsActions.saveTip().then(() => {
+  saveTip = async () => {
+    const { tip } = this.state;
+    try {
+      this.props.tipsActions.saveTip(tip);
       this.goBack();
-    }).catch((error) => {
+    } catch (error) {
       console.log(error);
-    });
+    }
   }
 
   deleteTip = async () => {
-    await this.props.tipsActions.deleteTip().then(() => {
+    const { tip } = this.state;
+    try {
+      await this.props.tipsActions.deleteTip(tip);
       this.goBack();
-    }).catch((error) => {
+    } catch (error) {
       console.log(error);
-    });
+    }
   }
 
   renderDeleteButton = () => {
-    const { tip } = this.props.tips;
+    const { tip } = this.state;
     if (!tip.id) {
       return null;
     }
@@ -116,12 +145,26 @@ export default class EditTipScreen extends React.Component {
   }
 
   selectJob = (selectedJobId) => {
-    this.updateValue('jobId', selectedJobId);
-    this.showJobPicker(false);
+    const { tip } = this.state;
+    const { jobs } = this.props.jobs;
+    const job = _.find(jobs, { id: selectedJobId });
+
+    const updatedTip = {
+      ...tip,
+      job,
+      jobId: job.id,
+      clockIn: job.clockIn,
+      clockOut: job.clockOut,
+    };
+
+    this.setState({
+      tip: formatTip(updatedTip),
+      showJobPicker: false,
+    });
   }
 
   render() {
-    const { tip } = this.props.tips;
+    const { tip } = this.state;
     if (!tip) {
       return null;
     }
@@ -313,7 +356,6 @@ export default class EditTipScreen extends React.Component {
                   multiline
                   onChangeText={_.partial(this.updateValue, 'notes')}
                   ref={(input) => { this.notesTextInput = input; }}
-                  returnKeyType="done"
                   value={tip.notes}
                 />
               </View>
@@ -328,3 +370,5 @@ export default class EditTipScreen extends React.Component {
     );
   }
 }
+
+export default EditTipScreen;

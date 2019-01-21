@@ -8,8 +8,7 @@ import { AppLoading, Font, Icon } from 'expo';
 
 import theme from './theme';
 import AppNavigator from './navigation/AppNavigator';
-import JobDAO from './dao/JobDAO';
-import TipDAO from './dao/TipDAO';
+import DAO from './dao/DAO';
 
 import rootReducer from './modules/index';
 
@@ -22,9 +21,9 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     try {
-      const jobDao = new JobDAO();
+      const jobDao = DAO.get(DAO.JOB);
       await jobDao.init();
-      const tipDao = new TipDAO();
+      const tipDao = DAO.get(DAO.TIP);
       await tipDao.init();
     } catch (error) {
       console.log('failed to init table', error);

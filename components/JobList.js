@@ -3,6 +3,13 @@ import { StyleSheet, FlatList } from 'react-native';
 
 import JobListItem from './JobListItem';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 15,
+  },
+});
+
 export default class JobsScreen extends React.Component {
   componentDidMount() {
     this.props.jobsActions.getJobs();
@@ -26,10 +33,3 @@ export default class JobsScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 15,
-  },
-});

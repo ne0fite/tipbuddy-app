@@ -1,29 +1,26 @@
 import _ from 'lodash';
 
 import { formatJob } from './formatters';
-import JobDAO from '../dao/JobDAO';
+import DAO from '../dao/DAO';
+import { getMonthlyTips } from './tips';
 
-const jobDao = new JobDAO();
+const jobDao = DAO.get(DAO.JOB);
 
-export const GET_JOBS = 'tipkeeper-app/jobs/GET_JOBS';
-export const GET_JOBS_SUCCESS = 'tipkeeper-app/jobs/GET_JOBS_SUCCESS';
-export const GET_JOBS_FAIL = 'tipkeeper-app/jobs/GET_JOBS_FAIL';
+export const GET_JOBS = 'tipstash-app/jobs/GET_JOBS';
+export const GET_JOBS_SUCCESS = 'tipstash-app/jobs/GET_JOBS_SUCCESS';
+export const GET_JOBS_FAIL = 'tipstash-app/jobs/GET_JOBS_FAIL';
 
-export const GET_JOB = 'tipkeeper-app/jobs/GET_JOB';
-export const GET_JOB_SUCCESS = 'tipkeeper-app/jobs/GET_JOB_SUCCESS';
-export const GET_JOB_FAIL = 'tipkeeper-app/jobs/GET_JOB_FAIL';
+export const GET_JOB = 'tipstash-app/jobs/GET_JOB';
+export const GET_JOB_SUCCESS = 'tipstash-app/jobs/GET_JOB_SUCCESS';
+export const GET_JOB_FAIL = 'tipstash-app/jobs/GET_JOB_FAIL';
 
-export const UPDATE_JOB = 'tipkeeper-app/jobs/UPDATE_JOB';
-export const UPDATE_JOB_SUCCESS = 'tipkeeper-app/jobs/UPDATE_JOB_SUCCESS';
-export const UPDATE_JOB_FAIL = 'tipkeeper-app/jobs/UPDATE_JOB_FAIL';
+export const SAVE_JOB = 'tipstash-app/jobs/SAVE_JOB';
+export const SAVE_JOB_SUCCESS = 'tipstash-app/jobs/SAVE_JOB_SUCCESS';
+export const SAVE_JOB_FAIL = 'tipstash-app/jobs/SAVE_JOB_FAIL';
 
-export const SAVE_JOB = 'tipkeeper-app/jobs/SAVE_JOB';
-export const SAVE_JOB_SUCCESS = 'tipkeeper-app/jobs/SAVE_JOB_SUCCESS';
-export const SAVE_JOB_FAIL = 'tipkeeper-app/jobs/SAVE_JOB_FAIL';
-
-export const DELETE_JOB = 'tipkeeper-app/jobs/DELETE_JOB';
-export const DELETE_JOB_SUCCESS = 'tipkeeper-app/jobs/DELETE_JOB_SUCCESS';
-export const DELETE_JOB_FAIL = 'tipkeeper-app/jobs/DELETE_JOB_FAIL';
+export const DELETE_JOB = 'tipstash-app/jobs/DELETE_JOB';
+export const DELETE_JOB_SUCCESS = 'tipstash-app/jobs/DELETE_JOB_SUCCESS';
+export const DELETE_JOB_FAIL = 'tipstash-app/jobs/DELETE_JOB_FAIL';
 
 const emptyJob = {
   name: '',
@@ -35,7 +32,6 @@ const emptyJob = {
 
 const initialState = {
   jobs: [],
-  job: emptyJob
 };
 
 const jobsReducer = (state = initialState, action) => {
@@ -57,15 +53,6 @@ const jobsReducer = (state = initialState, action) => {
     case GET_JOB_FAIL:
       console.log('failed to get job', action.payload.error);
       break;
-
-    case UPDATE_JOB:
-      return {
-        ...state,
-        job: formatJob({
-          ...state.job,
-          [action.payload.key]: action.payload.value
-        })
-      };
 
     case SAVE_JOB_SUCCESS:
       return {
@@ -141,35 +128,18 @@ export function getJob(id) {
   };
 }
 
-export function updateJob(key, value) {
-  return {
-    type: UPDATE_JOB,
-    payload: {
-      key,
-      value
-    }
-  };
-}
-
-export function saveJob() {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const { job } = state.jobs;
+export function saveJob(job) {
+  return async (dispatch) => {
     try {
       const savedJob = await jobDao.save(job);
-      dispatch({
+      await dispatch({
         type: SAVE_JOB_SUCCESS,
         payload: {
           job: savedJob
         }
       });
-      const jobs = await jobDao.getAll();
-      return dispatch({
-        type: GET_JOBS_SUCCESS,
-        payload: {
-          jobs
-        }
-      });
+      await dispatch(getJobs());
+      return dispatch(getMonthlyTips());
     } catch (error) {
       return dispatch({
         type: SAVE_JOB_FAIL,
@@ -181,22 +151,15 @@ export function saveJob() {
   };
 }
 
-export function deleteJob() {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const { job } = state.jobs;
+export function deleteJob(job) {
+  return async (dispatch) => {
     try {
       await jobDao.delete(job.id);
-      dispatch({
+      await dispatch({
         type: DELETE_JOB_SUCCESS
       });
-      const jobs = await jobDao.getAll();
-      return dispatch({
-        type: GET_JOBS_SUCCESS,
-        payload: {
-          jobs
-        }
-      });
+      await dispatch(getJobs());
+      return dispatch(getMonthlyTips());
     } catch (error) {
       return dispatch({
         type: DELETE_JOB_FAIL,

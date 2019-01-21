@@ -4,11 +4,18 @@ import {
   Subheading,
 } from 'react-native-paper';
 
-export default class JobListItem extends React.Component {
+const styles = StyleSheet.create({
+  job: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc'
+  },
+});
 
+export default class JobListItem extends React.Component {
   editJob = () => {
     const { job } = this.props;
-    this.props.navigation.navigate('EditJob', { id: job.id })
+    this.props.navigation.navigate('EditJob', { job });
   }
 
   render() {
@@ -25,11 +32,3 @@ export default class JobListItem extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  job: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc'
-  },
-});

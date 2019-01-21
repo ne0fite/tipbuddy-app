@@ -1,15 +1,36 @@
-import _ from 'lodash';
 import React from 'react';
+import _ from 'lodash';
 import {
   StyleSheet,
   TouchableOpacity,
   View
 } from 'react-native';
 import Accordion from 'react-native-collapsible/Accordion';
-import * as Animatable from 'react-native-animatable';
 
 import TipListItem from './TipListItem';
 import TipSummary from './TipSummary';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    backgroundColor: '#F5FCFF',
+  },
+  headerText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  content: {
+  },
+  active: {
+    backgroundColor: 'rgba(255,255,255,1)',
+  },
+  inactive: {
+    backgroundColor: 'rgba(245,252,255,1)',
+  },
+});
 
 export default class TipList extends React.Component {
   constructor(props) {
@@ -19,8 +40,12 @@ export default class TipList extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.props.tipsActions.getTips();
+  async componentDidMount() {
+    try {
+      await this.props.tipsActions.getMonthlyTips();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   renderHeader = (section, ndx, isActive) => (
@@ -44,19 +69,30 @@ export default class TipList extends React.Component {
     ));
 
     return (
-      <Animatable.View
-        duration={400}
+      <View
         style={[styles.content, isActive ? styles.active : styles.inactive]}
-        transition="backgroundColor"
       >
         {tipItems}
-      </Animatable.View>
+      </View>
     );
   }
 
-  setSections = sections => this.setState({
-    activeSections: _.isEmpty(sections) ? [] : sections,
-  });
+  setSections = async (sections) => {
+    const activeSections = sections || [];
+    try {
+      if (!_.isEmpty(activeSections)) {
+        const tipSummary = this.props.tips.tips[activeSections[0]];
+        const { year, month } = tipSummary;
+        await this.props.tipsActions.getTips(year, month);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    this.setState({
+      activeSections,
+    });
+  }
 
   render() {
     const { activeSections } = this.state;
@@ -74,25 +110,3 @@ export default class TipList extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    backgroundColor: '#F5FCFF',
-  },
-  headerText: {
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  content: {
-  },
-  active: {
-    backgroundColor: 'rgba(255,255,255,1)',
-  },
-  inactive: {
-    backgroundColor: 'rgba(245,252,255,1)',
-  },
-});

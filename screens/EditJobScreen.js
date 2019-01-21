@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import {
-  ScrollView,
   View,
 } from 'react-native';
 import { Icon } from 'expo';
@@ -16,10 +15,14 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 
+import {
+  formatJob,
+  makeEmptyJob,
+} from '../modules/formatters';
 import styles from '../theme/styles';
 import DeleteButton from '../components/DeleteButton';
 
-class EditJobScreen extends React.Component {
+class EditJobScreen extends Component {
   static navigationOptions = {
     header: null,
   };
@@ -30,14 +33,26 @@ class EditJobScreen extends React.Component {
       showDateTimePicker: {
         clockIn: false,
         clockOut: false
+      },
+      job: {
       }
     };
   }
 
   componentWillMount() {
+    const job = this.loadJob();
+    this.setState({
+      job
+    });
+  }
+
+  loadJob = () => {
     const { navigation } = this.props;
-    const id = _.get(navigation.state, 'params.id', null);
-    this.props.jobsActions.getJob(id);
+    const job = _.get(navigation.state, 'params.job', null);
+    if (!job) {
+      return makeEmptyJob();
+    }
+    return job;
   }
 
   goBack = () => {
@@ -45,7 +60,11 @@ class EditJobScreen extends React.Component {
   }
 
   updateValue = (key, value) => {
-    this.props.jobsActions.updateJob(key, value);
+    const { job } = this.state;
+    job[key] = value;
+    this.setState({
+      job: formatJob(job)
+    });
   }
 
   showDateTimePicker = (key) => {
@@ -74,21 +93,28 @@ class EditJobScreen extends React.Component {
     this.hideDateTimePicker(key);
   }
 
-  saveJob = () => {
-    this.props.jobsActions.saveJob().then(() => {
+  saveJob = async () => {
+    try {
+      const { job } = this.state;
+      this.props.jobsActions.saveJob(job);
       this.goBack();
-    }).catch((error) => {
+    } catch (error) {
       console.log(error);
-    });
+    }
   }
 
   deleteJob = async () => {
-    await this.props.jobsActions.deleteJob();
-    this.props.navigation.navigate('Jobs');
+    try {
+      const { job } = this.state;
+      await this.props.jobsActions.deleteJob(job);
+      this.goBack();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   renderDeleteButton = () => {
-    const { job } = this.props.jobs;
+    const { job } = this.state;
     if (!job.id) {
       return null;
     }
@@ -98,7 +124,7 @@ class EditJobScreen extends React.Component {
   }
 
   render() {
-    const { job } = this.props.jobs;
+    const { job } = this.state;
     if (!job) {
       return null;
     }
@@ -214,13 +240,11 @@ class EditJobScreen extends React.Component {
               </View>
             </View>
 
-
+            <View style={styles.buttonRow}>
+              {this.renderDeleteButton()}
+            </View>
           </View>
         </KeyboardAwareScrollView>
-
-        <View style={styles.buttonRow}>
-          {this.renderDeleteButton()}
-        </View>
       </View>
     );
   }
