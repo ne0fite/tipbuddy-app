@@ -1,6 +1,7 @@
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
+import * as d3Format from 'd3-format';
 
 export function getDateFromTime(time) {
   if (time) {
@@ -31,7 +32,29 @@ export function calculateDuration(clockInDate, clockOutDate) {
 
 function floatFormat(value) {
   if (_.isNumber(value)) {
-    return value.toFixed(2);
+    return d3Format.format(',.2f')(value);
+  }
+  return '';
+}
+
+function formatCurrency(value) {
+  if (_.isNumber(value)) {
+    return d3Format.format('$,.2f')(value);
+  }
+  return '';
+}
+
+function formatPercent(value) {
+  if (_.isNumber(value)) {
+    return d3Format.format(',.2%')(value);
+  }
+  return '';
+}
+
+function formatChange(value) {
+  if (_.isNumber(value)) {
+    const plus = value >= 0 ? '+' : '';
+    return d3Format.format(`${plus},.2%`)(value);
   }
   return '';
 }
@@ -98,17 +121,17 @@ export function formatTip(tip) {
   formatted.duration = calculateDuration(formatted.clockInDate, formatted.clockOutDate);
   formatted.durationString = floatFormat(formatted.duration);
 
-  formatted.amountString = `$${floatFormat(formatted.amount)}`;
-  formatted.salesString = `$${floatFormat(formatted.sales)}`;
+  formatted.amountString = formatCurrency(formatted.amount);
+  formatted.salesString = formatCurrency(formatted.sales);
 
   formatted.tipRate = formatted.amount / formatted.duration;
-  formatted.tipRateString = `$${floatFormat(formatted.tipRate)} / hr`;
+  formatted.tipRateString = `${formatCurrency(formatted.tipRate)} / hr`;
 
-  formatted.tipPercent = formatted.amount / formatted.sales * 100;
-  formatted.tipPercentString = `${floatFormat(formatted.tipPercent)}%`;
+  formatted.tipPercent = formatted.amount / formatted.sales;
+  formatted.tipPercentString = formatPercent(formatted.tipPercent);
 
   formatted.wages = formatted.jobRate * formatted.duration;
-  formatted.wagesString = `$${floatFormat(formatted.wages)}`;
+  formatted.wagesString = formatCurrency(formatted.wages);
 
   return formatted;
 }
@@ -137,17 +160,21 @@ export function formatTipSummary(tipSummary) {
   const monthDate = new Date(tipSummary.month);
   const formatted = {
     ...tipSummary,
-    amountSum: `$${floatFormat(tipSummary.amountSum)}`,
-    amountAvg: `$${floatFormat(tipSummary.amountAvg)}`,
-    salesSum: `$${floatFormat(tipSummary.salesSum)}`,
-    salesAvg: `$${floatFormat(tipSummary.salesAvg)}`,
-    tipPercenAvg: `${floatFormat(tipSummary.tipPercenAvg)}%`,
-    tipRateAvg: `$${floatFormat(tipSummary.tipRateAvg)} / hr`,
+    amountSum: formatCurrency(tipSummary.amountSum),
+    amountAvg: formatCurrency(tipSummary.amountAvg),
+    amountChange: formatChange(tipSummary.amountChange),
+    salesSum: formatCurrency(tipSummary.salesSum),
+    salesAvg: formatCurrency(tipSummary.salesAvg),
+    salesChange: formatChange(tipSummary.salesChange),
+    tipPercentAvg: formatPercent(tipSummary.tipPercentAvg),
+    tipPercentAvgChange: formatChange(tipSummary.tipPercentAvgChange),
+    tipRateAvg: `${formatCurrency(tipSummary.tipRateAvg)} / hr`,
+    tipRateAvgChange: formatChange(tipSummary.tipRateAvgChange),
     hoursSum: floatFormat(tipSummary.hoursSum),
     hoursAvg: floatFormat(tipSummary.hoursAvg),
-    wagesSum: `$${floatFormat(tipSummary.wagesSum)}`,
-    wagesAvg: `$${floatFormat(tipSummary.wagesAvg)}`,
-    tips: []
+    wagesSum: formatCurrency(tipSummary.wagesSum),
+    wagesAvg: formatCurrency(tipSummary.wagesAvg),
+    tips: [],
   };
 
   const monthDateUtc = moment(monthDate).utc();

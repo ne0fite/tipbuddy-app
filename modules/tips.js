@@ -30,6 +30,11 @@ const initialState = {
   tips: [],
 };
 
+function percentChange(fromValue, toValue) {
+  const change = (toValue - fromValue) / fromValue;
+  return change;
+}
+
 function handleGetTipSummarySuccess(state, action) {
   const {
     year,
@@ -38,7 +43,20 @@ function handleGetTipSummarySuccess(state, action) {
     tipSummaries
   } = action.payload;
 
-  const formattedTipSummaries = _.map(tipSummaries, formatTipSummary);
+  const formattedTipSummaries = _.map(tipSummaries, (tipSummary, ndx) => {
+    if (ndx > 0 && ndx < (tipSummaries.length - 1)) {
+      const prevTipSummary = tipSummaries[ndx + 1];
+      tipSummary.amountChange = percentChange(prevTipSummary.amountSum, tipSummary.amountSum);
+      tipSummary.salesChange = percentChange(prevTipSummary.salesSum, tipSummary.salesSum);
+      tipSummary.tipPercentAvgChange = percentChange(
+        prevTipSummary.tipPercentAvg,
+        tipSummary.tipPercentAvg
+      );
+      tipSummary.tipRateAvgChange = percentChange(prevTipSummary.tipRateAvg, tipSummary.tipRateAvg);
+    }
+    const formatted = formatTipSummary(tipSummary);
+    return formatted;
+  });
 
   const activeTips = _.find(formattedTipSummaries, { year, month });
   if (activeTips) {

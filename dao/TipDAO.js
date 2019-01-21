@@ -79,7 +79,7 @@ export default class TipDAO extends AbstractDAO {
         avg(t.amount) as amountAvg,
         sum(t.sales) as salesSum,
         avg(t.sales) as salesAvg,
-        avg(t.amount / t.sales * 100) as tipPercenAvg,
+        avg(t.amount / t.sales) as tipPercentAvg,
         avg(t.amount  / t.duration) as tipRateAvg,
         sum(t.duration) as hoursSum,
         avg(t.duration) as hoursAvg,

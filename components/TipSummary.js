@@ -27,7 +27,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   label: {
-    paddingRight: 5,
+    marginRight: 5,
+  },
+  change: {
+    fontSize: 10,
+    marginLeft: 5,
+    textAlign: 'right',
   },
 });
 
@@ -46,16 +51,24 @@ export default class TipSummary extends React.Component {
             <View style={styles.detailRow}>
               <Text style={styles.label}>Tips:</Text>
               <Text>{tipSummary.amountSum}</Text>
+              <Text style={styles.change}>{tipSummary.amountChange}</Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.label}>Tip Rate:</Text>
               <Text>{tipSummary.tipRateAvg}</Text>
+              <Text style={styles.change}>{tipSummary.tipRateAvgChange}</Text>
             </View>
           </View>
           <View style={styles.detailColumn}>
             <View style={styles.detailRow}>
-              <Text style={styles.label}> Hours:</Text>
-              <Text>{tipSummary.hoursSum}</Text>
+              <Text style={styles.label}>Sales:</Text>
+              <Text>{tipSummary.salesSum}</Text>
+              <Text style={styles.change}>{tipSummary.salesChange}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>Tip %:</Text>
+              <Text>{tipSummary.tipPercentAvg}</Text>
+              <Text style={styles.change}>{tipSummary.tipPercentAvgChange}</Text>
             </View>
           </View>
         </View>

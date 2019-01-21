@@ -28,7 +28,6 @@ export default class TipsScreen extends React.Component {
   }
 
   render() {
-    console.log('rendering tip screen');
     const { colors } = this.props.theme;
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
