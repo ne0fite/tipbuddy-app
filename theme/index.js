@@ -6,6 +6,7 @@ export default {
     ...PaperTheme.colors,
     // primary: '#990000',
     primary: '#03a9f4',
+    success: '#28a745',
     danger: '#dc3545',
     subheading: '#999999',
     inactive: '#999999',

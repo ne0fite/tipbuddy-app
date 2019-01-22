@@ -44,10 +44,12 @@ function handleGetTipSummarySuccess(state, action) {
   } = action.payload;
 
   const formattedTipSummaries = _.map(tipSummaries, (tipSummary, ndx) => {
-    if (ndx > 0 && ndx < (tipSummaries.length - 1)) {
+    if (ndx < (tipSummaries.length - 1)) {
       const prevTipSummary = tipSummaries[ndx + 1];
       tipSummary.amountChange = percentChange(prevTipSummary.amountSum, tipSummary.amountSum);
+      tipSummary.amountAvgChange = percentChange(prevTipSummary.amountAvg, tipSummary.amountAvg);
       tipSummary.salesChange = percentChange(prevTipSummary.salesSum, tipSummary.salesSum);
+      tipSummary.salesAvgChange = percentChange(prevTipSummary.salesAvg, tipSummary.salesAvg);
       tipSummary.tipPercentAvgChange = percentChange(
         prevTipSummary.tipPercentAvg,
         tipSummary.tipPercentAvg

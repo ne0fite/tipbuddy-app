@@ -171,7 +171,7 @@ class EditTipScreen extends Component {
 
     const { colors } = this.props.theme;
 
-    const title = tip.id ? 'Edit Tip' : 'New Tip';
+    const title = tip.id ? 'Edit Tips' : 'New Tips';
 
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -196,7 +196,7 @@ class EditTipScreen extends Component {
                   <Text style={styles.textValue}>{tip.jobName}</Text>
                   <Icon.Ionicons
                     color={colors.text}
-                    name="ios-arrow-dropright"
+                    name="md-arrow-dropright"
                     size={24}
                     style={styles.textValueGroupIcon}
                   />
