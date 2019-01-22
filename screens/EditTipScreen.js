@@ -99,8 +99,8 @@ class EditTipScreen extends Component {
   }
 
   confirmDate = (key, date) => {
-    const jobDate = date.getTime();
-    this.updateValue(key, jobDate);
+    const jobDate = moment(date).startOf('day').toDate();
+    this.updateValue(key, jobDate.getTime());
     this.hideDateTimePicker(key);
   }
 

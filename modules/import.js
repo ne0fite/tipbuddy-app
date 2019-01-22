@@ -106,7 +106,9 @@ export async function importData(url) {
 
     const job = await getOrCreateJob(jobName);
 
-    const jobDate = moment(getColumnData(data, 'Work Date', null)).toDate();
+    const workDate = getColumnData(data, 'Work Date', null);
+    const jobDate = moment(workDate).startOf('day').toDate();
+
     const amount = parseFloat(getColumnData(data, 'Tip Amount', 0), 10);
     const sales = parseFloat(getColumnData(data, 'Sales', 0), 10);
     const ccTips = parseFloat(getColumnData(data, 'Credit Card Tips', 0), 10);

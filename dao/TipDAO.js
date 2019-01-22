@@ -102,7 +102,8 @@ export default class TipDAO extends AbstractDAO {
         from tips t
         inner join jobs j on t.jobId = j.id
         where t.id = ?;`,
-      [id]);
+      [id]
+    );
     return results.rows.item(0);
   }
 
