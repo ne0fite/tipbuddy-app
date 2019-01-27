@@ -1,6 +1,7 @@
 import _ from 'lodash';
+import moment from 'moment';
 
-import { formatTip, formatTipSummary } from './formatters';
+import { formatTip } from './formatters';
 import DAO from '../dao/DAO';
 
 const tipDao = DAO.get(DAO.TIP);
@@ -35,6 +36,40 @@ function percentChange(fromValue, toValue) {
   return change;
 }
 
+const getJobSummaries = tips => (
+  _.reduce(tips, (jobs, tip) => {
+    const formattedTip = formatTip(tip);
+
+    if (!_.has(jobs, formattedTip.jobId)) {
+      jobs[formattedTip.jobId] = {
+        id: formattedTip.jobId,
+        jobName: formattedTip.jobName,
+        amountSum: 0,
+        salesSum: 0,
+        tipPercentSum: 0,
+        tipRateSum: 0,
+        tipPercentAvg: 0,
+        tipRateAvg: 0,
+        tips: []
+      };
+    }
+    const job = jobs[formattedTip.jobId];
+
+    job.amountSum += formattedTip.amount;
+    job.salesSum += formattedTip.sales;
+    job.tipPercentSum += formattedTip.tipPercent;
+    job.tipRateSum += formattedTip.tipRate;
+
+    job.tips.push(formattedTip);
+
+    job.numTips = _.size(job.tips);
+    job.tipPercentAvg = job.tipPercentSum / job.numTips;
+    job.tipRateAvg = job.tipRateSum / job.numTips;
+
+    return jobs;
+  }, {})
+);
+
 function handleGetTipSummarySuccess(state, action) {
   const {
     year,
@@ -44,11 +79,20 @@ function handleGetTipSummarySuccess(state, action) {
   } = action.payload;
 
   const formattedTipSummaries = _.map(tipSummaries, (tipSummary, ndx) => {
+    const monthDate = moment(tipSummary.month);
+    tipSummary.monthDate = monthDate.toDate();
+    tipSummary.year = monthDate.get('year');
+    tipSummary.month = monthDate.get('month') + 1;
+    tipSummary.monthString = monthDate.format('MMMM YYYY');
+    tipSummary.tips = [];
+
     if (ndx < (tipSummaries.length - 1)) {
       const prevTipSummary = tipSummaries[ndx + 1];
       tipSummary.amountChange = percentChange(prevTipSummary.amountSum, tipSummary.amountSum);
+      tipSummary.amountSumChange = percentChange(prevTipSummary.amountSum, tipSummary.amountSum);
       tipSummary.amountAvgChange = percentChange(prevTipSummary.amountAvg, tipSummary.amountAvg);
       tipSummary.salesChange = percentChange(prevTipSummary.salesSum, tipSummary.salesSum);
+      tipSummary.salesSumChange = percentChange(prevTipSummary.salesSum, tipSummary.salesSum);
       tipSummary.salesAvgChange = percentChange(prevTipSummary.salesAvg, tipSummary.salesAvg);
       tipSummary.tipPercentAvgChange = percentChange(
         prevTipSummary.tipPercentAvg,
@@ -56,13 +100,14 @@ function handleGetTipSummarySuccess(state, action) {
       );
       tipSummary.tipRateAvgChange = percentChange(prevTipSummary.tipRateAvg, tipSummary.tipRateAvg);
     }
-    const formatted = formatTipSummary(tipSummary);
-    return formatted;
+    return tipSummary;
   });
 
-  const activeTips = _.find(formattedTipSummaries, { year, month });
+  const jobSummaries = getJobSummaries(tips);
+
+  const activeTips = _.find(tipSummaries, { year, month });
   if (activeTips) {
-    activeTips.tips = _.map(tips, formatTip);
+    activeTips.tips = jobSummaries;
   }
 
   return {
@@ -77,9 +122,11 @@ function handleGetTipsSuccess(state, action) {
   const { tips: tipSummaries } = state;
   const { year, month, tips } = action.payload;
 
+  const jobSummaries = getJobSummaries(tips);
+
   const activeTips = _.find(tipSummaries, { year, month });
   if (activeTips) {
-    activeTips.tips = _.map(tips, formatTip);
+    activeTips.tips = jobSummaries;
   }
 
   return {
@@ -177,6 +224,7 @@ export function getMonthlyTips(params) {
   const { year: activeYear, month: activeMonth } = initParams(params);
   return async (dispatch) => {
     try {
+
       const tipSummaries = await tipDao.getMonthlyTotals();
       const tips = await tipDao.getAllByMonth(activeYear, activeMonth);
       return dispatch({

@@ -157,7 +157,6 @@ export function makeEmptyTip(defaultJob) {
 }
 
 export function formatTipSummary(tipSummary) {
-  const monthDate = moment(tipSummary.month);
   const formatted = {
     ...tipSummary,
     amountSum: formatCurrency(tipSummary.amountSum),
@@ -178,11 +177,5 @@ export function formatTipSummary(tipSummary) {
     wagesAvg: formatCurrency(tipSummary.wagesAvg),
     tips: [],
   };
-
-  formatted.monthDate = monthDate.toDate();
-  formatted.year = monthDate.get('year');
-  formatted.month = monthDate.get('month') + 1;
-  formatted.monthString = monthDate.format('MMMM YYYY');
-
   return formatted;
 }

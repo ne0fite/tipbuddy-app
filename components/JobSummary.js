@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
-  Title,
+  Subheading,
   Text,
 } from 'react-native-paper';
 
@@ -9,7 +9,7 @@ import Change from './Change';
 import { formatTipSummary } from '../modules/formatters';
 
 const styles = StyleSheet.create({
-  tipSummary: {
+  jobSummary: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc'
@@ -43,17 +43,16 @@ const styles = StyleSheet.create({
   }
 });
 
-const TipSummary = (props) => {
-  const { tipSummary } = props;
-  const formatted = formatTipSummary(tipSummary);
+const JobSummary = (props) => {
+  const { jobSummary } = props;
+  const formatted = formatTipSummary(jobSummary);
 
   const { colors } = props.theme;
   return (
     <View
-      style={[styles.tipSummary, { backgroundColor: colors.background, }]}
-      key={`tip-summary-${tipSummary.monthString}`}
+      style={[styles.jobSummary, { backgroundColor: colors.background, }]}
     >
-      <Title>{formatted.monthString}</Title>
+      <Subheading>{formatted.jobName}</Subheading>
       <View style={styles.detailContainer}>
         <View style={styles.detailColumn}>
 
@@ -97,4 +96,4 @@ const TipSummary = (props) => {
   );
 };
 
-export default TipSummary;
+export default JobSummary;

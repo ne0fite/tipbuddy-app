@@ -3,12 +3,14 @@ import _ from 'lodash';
 import {
   StyleSheet,
   TouchableOpacity,
+  Text,
   View
 } from 'react-native';
 import Accordion from 'react-native-collapsible/Accordion';
 
 import TipListItem from './TipListItem';
 import TipSummary from './TipSummary';
+import JobSummary from './JobSummary';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,14 +35,11 @@ const styles = StyleSheet.create({
 });
 
 export default class TipList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeSections: [0]
-    };
-  }
+  state = {
+    activeSections: [0]
+  };
 
-  async componentDidMount() {
+  async componentWillMount() {
     try {
       await this.props.tipsActions.getMonthlyTips();
     } catch (error) {
@@ -60,13 +59,27 @@ export default class TipList extends React.Component {
   )
 
   renderContent = (section, ndx, isActive) => {
-    const tipItems = section.tips.map(tip => (
-      <TipListItem
-        {...this.props}
-        key={`tip-${tip.id}`}
-        tip={tip}
-      />
-    ));
+    const tipItems = _.map(section.tips, (job) => {
+      const content = [
+        <JobSummary
+          {...this.props}
+          key={`job-${job.id}`}
+          jobSummary={job}
+        />
+      ];
+
+      _.each(job.tips, tip => (
+        content.push(
+          <TipListItem
+            {...this.props}
+            key={`tip-${tip.id}`}
+            tip={tip}
+          />
+        )
+      ));
+
+      return content;
+    });
 
     return (
       <View
@@ -97,6 +110,10 @@ export default class TipList extends React.Component {
   render() {
     const { activeSections } = this.state;
     const { tips } = this.props.tips;
+    if (_.isEmpty(tips)) {
+      return <Text>Empty</Text>;
+    }
+
     return (
       <Accordion
         activeSections={activeSections}

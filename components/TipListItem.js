@@ -47,9 +47,7 @@ export default class TipListItem extends React.Component {
       <TouchableOpacity
         style={[styles.tip, { backgroundColor: colors.background, }]}
         onPress={this.editTip}
-        key={tip.id}
       >
-        <Subheading>{tip.jobName}</Subheading>
         <Text style={{ fontFamily: fonts.thin, fontSize: 16, marginBottom: 5 }}>
           {tip.jobDateString}
         </Text>

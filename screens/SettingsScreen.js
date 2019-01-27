@@ -35,7 +35,8 @@ export default class SettingsScreen extends React.Component {
 
   importData = async () => {
     try {
-      const url = 'http://localhost/tip_bucket_export.csv';
+      // const url = 'http://10.0.0.120/tip_bucket_export.csv';
+      const url = 'https://www.tipstashapp.com/wp-content/uploads/2019/01/tip_bucket_export.csv';
       await importData(url);
       this.props.jobsActions.getJobs();
       this.props.tipsActions.getMonthlyTips();

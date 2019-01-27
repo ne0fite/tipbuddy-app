@@ -88,7 +88,6 @@ function parseClockTime(dateString) {
 }
 
 export async function importData(url) {
-
   jobMap.clear();
 
   const results = await loadAndParseUrl(url);

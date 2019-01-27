@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ScrollView,
-  StyleSheet,
   View,
 } from 'react-native';
 import {
@@ -9,11 +8,10 @@ import {
   Title,
 } from 'react-native-paper';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+import styles from '../theme/styles';
+import AvgTipsLineChart from '../components/charts/AvgTipsLineChart';
+import AvgTipPercentLineChart from '../components/charts/AvgTipPercentLineChart';
+import AvgSalesLineChart from '../components/charts/AvgSalesLineChart';
 
 export default class ReportsScreen extends React.Component {
   static navigationOptions = {
@@ -26,6 +24,7 @@ export default class ReportsScreen extends React.Component {
 
   render() {
     const { colors } = this.props.theme;
+
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <Appbar.Header>
@@ -34,7 +33,12 @@ export default class ReportsScreen extends React.Component {
           />
         </Appbar.Header>
         <ScrollView>
-          <Title>Reports!</Title>
+          <View style={{ padding: 15 }}>
+            <Title>Last 12 Months</Title>
+            <AvgTipPercentLineChart {...this.props} />
+            <AvgTipsLineChart {...this.props} />
+            <AvgSalesLineChart {...this.props} />
+          </View>
         </ScrollView>
       </View>
     );

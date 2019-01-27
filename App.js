@@ -4,6 +4,10 @@ import thunk from 'redux-thunk';
 import { Provider as StoreProvider } from 'react-redux';
 import { Provider as PaperProvider } from 'react-native-paper';
 
+// @see https://github.com/jhen0409/react-native-debugger/blob/master/docs/getting-started.md
+// @see https://github.com/zalmoxisus/remote-redux-devtools
+// import { composeWithDevTools } from 'redux-devtools-extension';
+
 import { AppLoading, Font, Icon } from 'expo';
 
 import theme from './theme';
@@ -12,6 +16,7 @@ import DAO from './dao/DAO';
 
 import rootReducer from './modules/index';
 
+// const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default class App extends React.Component {
