@@ -19,10 +19,6 @@ export default class TipsScreen extends React.Component {
     header: null,
   };
 
-  componentWillMount() {
-    this.props.jobsActions.getJobs();
-  }
-
   newTip = () => {
     this.props.navigation.navigate('EditTip');
   }

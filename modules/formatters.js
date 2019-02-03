@@ -3,6 +3,8 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import * as d3Format from 'd3-format';
 
+import DAO from '../dao/DAO';
+
 export function getDateFromTime(time) {
   if (time) {
     return new Date(moment().format(`YYYY-MM-DDT${time}:00Z`));
@@ -136,7 +138,7 @@ export function formatTip(tip) {
   return formatted;
 }
 
-export function makeEmptyTip(defaultJob) {
+export async function makeEmptyTip() {
   const tip = {
     jobDate: new Date(),
     amount: 0.00,
@@ -145,6 +147,8 @@ export function makeEmptyTip(defaultJob) {
     tipOut: 0.00,
   };
 
+  const jobDao = DAO.get(DAO.JOB);
+  const defaultJob = await jobDao.getDefault();
   if (defaultJob) {
     tip.jobId = defaultJob.id;
     tip.jobName = defaultJob.name;

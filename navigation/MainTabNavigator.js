@@ -4,7 +4,10 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import theme from '../theme';
 import TabBarIcon from '../components/TabBarIcon';
-import appContainer from '../containers/AppContainer';
+import tipsContainer from '../containers/TipsContainer';
+import reportsContainer from '../containers/ReportsContainer';
+import jobsContainer from '../containers/JobsContainer';
+import settingsContainer from '../containers/SettingsContainer';
 import TipsScreen from '../screens/TipsScreen';
 import EditTipScreen from '../screens/EditTipScreen';
 import ReportsScreen from '../screens/ReportsScreen';
@@ -14,8 +17,8 @@ import SettingsScreen from '../screens/SettingsScreen';
 import AboutScreen from '../screens/AboutScreen';
 
 const TipsStack = createStackNavigator({
-  Tips: appContainer(TipsScreen),
-  EditTip: appContainer(EditTipScreen),
+  Tips: tipsContainer(TipsScreen),
+  EditTip: tipsContainer(EditTipScreen),
 });
 
 TipsStack.navigationOptions = {
@@ -33,7 +36,7 @@ TipsStack.navigationOptions = {
 };
 
 const ReportsStack = createStackNavigator({
-  Tips: appContainer(ReportsScreen),
+  Reports: reportsContainer(ReportsScreen),
 });
 
 ReportsStack.navigationOptions = {
@@ -51,8 +54,8 @@ ReportsStack.navigationOptions = {
 };
 
 const JobsStack = createStackNavigator({
-  Jobs: appContainer(JobsScreen),
-  EditJob: appContainer(EditJobScreen),
+  Jobs: jobsContainer(JobsScreen),
+  EditJob: jobsContainer(EditJobScreen),
 });
 
 JobsStack.navigationOptions = {
@@ -66,8 +69,8 @@ JobsStack.navigationOptions = {
 };
 
 const SettingsStack = createStackNavigator({
-  Settings: appContainer(SettingsScreen),
-  About: appContainer(AboutScreen),
+  Settings: settingsContainer(SettingsScreen),
+  About: AboutScreen,
 });
 
 SettingsStack.navigationOptions = {

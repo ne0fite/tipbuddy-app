@@ -38,30 +38,24 @@ class EditTipScreen extends Component {
     },
   };
 
-  componentWillMount() {
-    const tip = this.loadTip();
-    this.setState({
-      tip
-    });
+  async componentWillMount() {
+    try {
+      const tip = await this.loadTip();
+      this.setState({
+        tip
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  loadTip = () => {
+  loadTip = async () => {
     const { navigation } = this.props;
     const tip = _.get(navigation.state, 'params.tip', null);
     if (!tip) {
-      const defaultJob = this.getDefaultJob();
-      return makeEmptyTip(defaultJob);
+      return makeEmptyTip();
     }
     return tip;
-  }
-
-  getDefaultJob = () => {
-    const { jobs } = this.props.jobs;
-    const job = _.find(this.props.jobs.jobs, { defaultJob: true });
-    if (!job) {
-      return _.first(jobs);
-    }
-    return job;
   }
 
   goBack = () => {
@@ -144,10 +138,8 @@ class EditTipScreen extends Component {
     });
   }
 
-  selectJob = (selectedJobId) => {
+  selectJob = (job) => {
     const { tip } = this.state;
-    const { jobs } = this.props.jobs;
-    const job = _.find(jobs, { id: selectedJobId });
 
     const updatedTip = {
       ...tip,

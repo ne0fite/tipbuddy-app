@@ -3,7 +3,6 @@ import _ from 'lodash';
 import {
   StyleSheet,
   TouchableOpacity,
-  Text,
   View
 } from 'react-native';
 import Accordion from 'react-native-collapsible/Accordion';
@@ -42,6 +41,7 @@ export default class TipList extends React.Component {
   async componentWillMount() {
     try {
       await this.props.tipsActions.getMonthlyTips();
+      this.setSections(this.state.activeSections);
     } catch (error) {
       console.log(error);
     }
@@ -110,9 +110,6 @@ export default class TipList extends React.Component {
   render() {
     const { activeSections } = this.state;
     const { tips } = this.props.tips;
-    if (_.isEmpty(tips)) {
-      return <Text>Empty</Text>;
-    }
 
     return (
       <Accordion

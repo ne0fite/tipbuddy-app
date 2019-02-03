@@ -15,6 +15,10 @@ import {
   withTheme,
 } from 'react-native-paper';
 
+import DAO from '../dao/DAO';
+
+const jobDao = DAO.get(DAO.JOB);
+
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
@@ -33,7 +37,19 @@ class SelectJobDialog extends Component {
     const { selectedJobId } = this.props;
     this.state = {
       selectedJobId,
+      jobs: []
     };
+  }
+
+  async componentDidMount() {
+    try {
+      const jobs = await jobDao.getAll();
+      this.setState({
+        jobs
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -44,11 +60,9 @@ class SelectJobDialog extends Component {
   }
 
   selectJob = (selectedJobId) => {
-    if (selectedJobId !== this.state.selectedJobId) {
-      this.setState({
-        selectedJobId
-      });
-    }
+    this.setState({
+      selectedJobId
+    });
   }
 
   cancel = () => {
@@ -56,7 +70,8 @@ class SelectJobDialog extends Component {
   }
 
   confirm = () => {
-    this.props.onConfirm(this.state.selectedJobId);
+    const selectedJob = _.find(this.state.jobs, { id: this.state.selectedJobId });
+    this.props.onConfirm(selectedJob);
   }
 
   renderJobOption = (job) => {
@@ -86,7 +101,7 @@ class SelectJobDialog extends Component {
   render() {
     const { visible } = this.props;
 
-    const { jobs } = this.props.jobs;
+    const { jobs } = this.state;
     const jobItems = _.map(jobs, job => (
       this.renderJobOption(job)
     ));
